@@ -27,9 +27,8 @@ lane :test do
     sh("./gradlew test")
 
   elsif project_type == "flutter"
-    sh("cd ../")
-    sh("flutter pub get")
-    sh("flutter test --coverage -r expanded")
+    sh("cd .. && flutter pub get")
+    sh("cd .. && flutter test --coverage -r expanded")
 
   else
     UI.user_error!("Unsupported project type")
