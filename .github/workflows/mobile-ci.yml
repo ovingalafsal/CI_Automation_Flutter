@@ -16,7 +16,6 @@ jobs:
           npm install
 
       - name: Install Flutter
-        if: env.PROJECT_TYPE == 'flutter'
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
