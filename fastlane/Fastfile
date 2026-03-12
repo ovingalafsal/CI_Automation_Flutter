@@ -27,6 +27,9 @@ lane :test do
     sh("./gradlew test")
 
   elsif project_type == "flutter"
+    sh("pwd")
+    sh("ls -la")
+    sh("ls -la test")
     sh("flutter pub get")
     sh("flutter test --coverage -r expanded")
 
