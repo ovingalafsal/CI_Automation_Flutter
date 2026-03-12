@@ -1,0 +1,82 @@
+
+lane :lint do
+  project_type = ENV["PROJECT_TYPE"]
+
+  if project_type == "ios"
+    sh("swiftlint")
+
+  elsif project_type == "android"
+    sh("./gradlew detekt")
+
+  elsif project_type == "flutter"
+    sh("flutter analyze")
+
+  else
+    UI.user_error!("Unsupported project type")
+  end
+end
+
+
+lane :test do
+  project_type = ENV["PROJECT_TYPE"]
+
+  if project_type == "ios"
+    scan
+
+  elsif project_type == "android"
+    sh("./gradlew test")
+
+  elsif project_type == "flutter"
+    sh("flutter test --coverage")
+
+  else
+    UI.user_error!("Unsupported project type")
+  end
+end
+
+
+lane :release do
+  project_type = ENV["PROJECT_TYPE"]
+
+  if project_type == "ios"
+    increment_build_number
+    build_app
+
+  elsif project_type == "android"
+    sh("./gradlew assembleRelease")
+
+  elsif project_type == "flutter"
+    sh("flutter build ipa || flutter build apk")
+
+  end
+end
+
+
+lane :hotfix do
+  project_type = ENV["PROJECT_TYPE"]
+
+  UI.message("Hotfix lane triggered")
+
+  if project_type == "ios"
+    build_app
+
+  elsif project_type == "android"
+    sh("./gradlew assembleRelease")
+
+  elsif project_type == "flutter"
+    sh("flutter build apk")
+
+  end
+end
+
+
+lane :sync_certs do
+  project_type = ENV["PROJECT_TYPE"]
+
+  if project_type == "ios"
+    match(type: "appstore")
+  else
+    UI.message("Certificate sync only required for iOS")
+  end
+end
+
