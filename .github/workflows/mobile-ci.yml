@@ -30,12 +30,21 @@ jobs:
       - name: Coverage
         run: |
           echo "Running Flutter coverage check"
-          TOTAL=$(grep -Po 'LF:\K\d+' coverage/lcov.info | awk '{sum+=$1} END {print sum}')
-          COVERED=$(grep -Po 'LH:\K\d+' coverage/lcov.info | awk '{sum+=$1} END {print sum}')
+      
+          if [ ! -f coverage/lcov.info ]; then
+            echo "Coverage file not found!"
+            exit 1
+          fi
+      
+          TOTAL=$(grep '^LF:' coverage/lcov.info | awk -F: '{sum+=$2} END {print sum}')
+          COVERED=$(grep '^LH:' coverage/lcov.info | awk -F: '{sum+=$2} END {print sum}')
+      
           SCORE=$((100 * COVERED / TOTAL))
-
+      
+          echo "Total lines: $TOTAL"
+          echo "Covered lines: $COVERED"
           echo "Coverage score: $SCORE%"
-
+      
           if [ "$SCORE" -lt 80 ]; then
             echo "Coverage below threshold!"
             exit 1
