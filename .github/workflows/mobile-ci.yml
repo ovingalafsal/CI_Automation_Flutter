@@ -28,7 +28,20 @@ jobs:
         run: fastlane test
 
       - name: Coverage
-        run: echo "Coverage threshold 80"
+        run: |
+          echo "Running Flutter coverage check"
+          TOTAL=$(grep -Po 'LF:\K\d+' coverage/lcov.info | awk '{sum+=$1} END {print sum}')
+          COVERED=$(grep -Po 'LH:\K\d+' coverage/lcov.info | awk '{sum+=$1} END {print sum}')
+          SCORE=$((100 * COVERED / TOTAL))
+
+          echo "Coverage score: $SCORE%"
+
+          if [ "$SCORE" -lt 80 ]; then
+            echo "Coverage below threshold!"
+            exit 1
+          else
+            echo "Coverage check passed"
+          fi
 
       - name: AI Diagnostics
         if: failure()
